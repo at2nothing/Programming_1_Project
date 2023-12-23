@@ -2,5 +2,7 @@
     "files.associations": {
         "string": "cpp",
         "iostream": "cpp"
-    }
+    },
+    "docify.commentService.programmingLanguage": "cpp",
+    "docify.commentService.docstringFormat": "Google"
 }
