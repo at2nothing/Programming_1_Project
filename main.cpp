@@ -18,7 +18,7 @@ int account_no_creation();
 void print(string text);
 void format_on();
 void format_off();
-int check_int_input(int input,int min,int max);
+int check_int_input(int min,int max);
 int check_passcode();
 
 struct Account {
@@ -30,16 +30,14 @@ struct Account {
 };
 
  
-	vector<Account> accounts_vector;
-
-
-	int choice;
-	int num;
-	int num2 = 0;
-	int pass;
-	int loop2 = 1;
-	int choice2;
-	string cancel;
+vector<Account> accounts_vector;
+int choice;
+int num;
+int num2 = 0;
+int pass;
+int loop2 = 1;
+int option;
+string cancel;
 
 
 
@@ -53,7 +51,7 @@ void main() {
 			"(1) NEW BANK ACCOUNT \n"
 			"(2) ATM \n"
 			"Type 1 or 2: ");
-		choice = check_int_input(1, 3);
+		choice = check_int_input(1, 2);
 		cout << endl;
 
 		if (choice == 1) 
@@ -75,7 +73,7 @@ void main() {
 
 
 
-/** FUNCTIONS**/
+/***********************************   FUNCTIONS   ***************************************/
 
 
 int account_no_creation(){  //ACCOUNT NUMBER CREATION FUNCTION
@@ -89,134 +87,172 @@ void new_account(){  //NEW ACCOUNT FUNCTION
         "Enter your name: ");
 	cin >> account.name;
 	cout << endl;
-	print("Enter your password: ");
+	print("Create your password: ");
 	account.password= check_passcode();
 	cout << endl;
 	print("Enter your balance: ");
 	account.balance = check_int_input(0, 100000000);
 	cout << endl;
+							if (account.balance >= 1000000) {
+							account.type = "GOLD";
+						}
+						else
+						{
+							account.type = "SILVER";
+						}
+
 	account.acc_number = account_no_creation();
 	accounts_vector.push_back(account);
+
 
 	format_on();
 	cout<<"Your account is created successfully\n";
 	cout<<"Your account number is " << account.acc_number << endl;
-	cout<<"Your balance is " << account.balance << endl;
+	cout<<"Your account type is " << account.type << endl; 
+	cout<<"Your balance is " << account.balance <<"$"<< endl;
 	cout << endl;
 	format_off();
 }
 
 
-void ATM(){  //ATM FUNCTION
-		cout<<"Welcome\n";
-		cout<<"Enter your account number: ";
-		cin >> num;
+void ATM(){  //ATM 
+	
+		print("Welcome\n"
+		"Enter your account number: ");
+		num = check_int_input(1, 100);
 		cout << endl;
-		for (int i = 1; i <= 100; i++) {
-			if (num == acc_number[i]) {
-				num2 = i; //variable to save index in to check in if condition
+		bool not_found = false;
+		for (auto account : accounts_vector) {
+			if ((num) != account.acc_number) {
+				not_found = true;
 			}
 		}
-		if (num2 == 0) {
-			cout<<"This account number is incorrect" << endl; //how didnt continue
+		if (not_found==true)
+		{
+			print ("Invalid account number\n"
+			"Please try again Later\n\n\n");
 		}
+		
 		else {
-			cout<<"Please enter your PIN number and press ENTER: ";
-			cin >> pass;
+			print("Please enter your PIN number and press ENTER: ");
+			pass = check_int_input(0, 10000);
 			cout << endl;
-			for (int j = 1; j <= 3; j++) {
-				if (pass == password[num2]) {
-					for (x; x <= 100; x++) {
-						cout<<"You are customer number " << num2 << endl;
-						cout<<"Your name is " << name[num2] << endl;
-						if (balance[num2] >= 1000000) {
-							type = "GOLD";
+			for (int j = 1; j < 3; j++) {
+				if (pass == accounts_vector[num-1].password) {
+					while (true) {
+						format_on();
+						cout<<"Welcome " << accounts_vector[num-1].name << endl;
+						cout<<"Your account number is " << accounts_vector[num-1].acc_number << endl;
+						cout<<"Your account type is " << accounts_vector[num-1].type << endl;
+						cout<<"Your available balance is " << accounts_vector[num-1].balance<<"$" << endl;
+						cout << endl;
+						if (accounts_vector[num-1].balance >= 1000000) {
+							accounts_vector[num-1].type = "GOLD";
 						}
 						else
 						{
-							type = "SILVER";
+							accounts_vector[num-1].type = "SILVER";
 						}
-						cout<<"Availale balance is " << balance[num2] << endl;
-						cout<<"Your account type is " << type << endl;
 						cout << endl;
-						int choice2;
-						double exchange;
+						int option;
+						int exchange;
 						int num3; //to check acc num
 						int num4 = 0; // other account to be transfered to
 						cout<<"Choose the action\n";
 						cout<<"(1) Cash Withdrawal\n";
 						cout<<"(2) Deposit\n";
-						cout<<"(3) Fund Transfer\n\n";
-						cout<<"Type 1 or 2 or 3: ";
-						cin >> choice2;
+						cout<<"(3) Fund Transfer\n";
+						cout<<"(4) quit\n\n";
+						cout<<"Type 1 or 2 or 3 or 4: ";
+						
+						format_off();
+						option = check_int_input(1, 4);
 						cout << endl;
-						if (choice2 == 1) { //cash withdrawal
-							cout<<"Enter amount of cash to be withdrawn: ";
-							cin >> exchange;
-							if (exchange > balance[num2]) {
-								cout<<"You do not have enough cash\n\n";
+						if (option == 1) { //cash withdrawal
+							print("Your Limit is 2000\n");
+							print("Enter amount of cash to be withdrawn: ");
+							exchange = check_int_input(0, 2000);
+							if (exchange > accounts_vector[num-1].balance) {
+								print("You do not have enough cash\n\n");
 							}
 							else {
-								balance[num2] = balance[num2] - exchange;
+								accounts_vector[num-1].balance -= exchange;
+								print("Cash withdrawn successfully\n");
+								format_on();
 								cout<<"-" << exchange << endl;
-								cout<<"Available balance = " << balance[num2] << endl;
+								cout<<"Available balance = " << accounts_vector[num-1].balance<<"$" << endl;
+								format_off();
 							}
 						}
-						else if (choice2 == 2) { //deposit (put cash)
-							cout<<"Enter amount of cash you want to deposit: ";
-							cin >> exchange;
-							balance[num2] = balance[num2] + exchange;
+						else if (option == 2) { //deposit (put cash)
+							print("Enter amount of cash you want to deposit: ");
+							format_on();
+							exchange = check_int_input(0, 100000);
+							accounts_vector[num-1].balance += exchange;
 							cout<<"+" << exchange << endl;
-							cout<<"Available balance = " << balance[num2] << endl;
+							cout<<"Available balance = " << accounts_vector[num-1].balance <<"$"<< endl;
 						}
-						else if (choice2 == 3) {
-							cout<<"Enter account number you want to transfer cash to: ";
-							cin >> num3;
-							for (int k = 1; k <= 100; k++) {
-								if (num3 == acc_number[k]) { //if not correct
-									num4 = k; // num4 is index of the transfered acc
+						else if (option == 3) {
+							print("Enter account number you want to transfer cash to: ");
+							num2 = check_int_input(1, 100);
+							for (auto account : accounts_vector) {
+								if ((num2-1) != account.acc_number) {
+									print("This account number is invalid\n");
+									not_found = true;
 								}
 							}
-							if (num4 == 0) {
-								cout<<"This account number is invalid" << endl; //how didnt continue
+							if (not_found)
+							{
+								print ("Invalid account number\n"
+								"Please try again Later\n");
 							}
 							else {
-								cout<<"Enter amount of cash to be transfered: ";
-								cin >> exchange;
-								if (exchange > balance[num2]) {
-									cout<<"You do not have enough cash to transfer\n";
-									cout<<"Please enter a valid number\n";
+								print("Enter amount of cash to be transfered: ");
+								exchange = check_int_input(0, 100000);
+								if (exchange > accounts_vector[num-1].balance) {
+									print("You do not have enough cash to transfer\n"
+									"Please try again later\n");
 								}
 								else {
-									balance[num2] = balance[num2] - exchange;
-									balance[num4] = balance[num4] + exchange;
+									accounts_vector[num-1].balance -= exchange;
+									accounts_vector[num2-1].balance += exchange;
+									format_on();
 									cout<<"-" << exchange << " are transfered successfully from your account\n";
 									cout<<"+" << exchange << " are transfered successfully to the other account\n";
 									cout<<"Cash transfered successfully\n";
-									cout<<"Available balance = " << balance[num2] << endl;
+									cout<<"Available balance = " << accounts_vector[num-1].balance<<"$" << endl;
+									format_off();
+								
 								}
 							}
 						}
+						else if (option == 4) {
+							print("Thank you for using our bank\n");
+							break;
+						}
 						else {
-							cout<<"Enter a valid number." << endl;
+							print("Enter a valid number.");
 						}
-						cout<<"Do you want to exit the transaction?\n";
-						cout<<"yes or no\n";
+
+
+print("Do you want to do any other operation? (yes/no): ");
 						cin >> cancel;
-						if (cancel == "yes") {
-							x = 101;
+						if (cancel == "no") {
+							break;
 						}
-						else if (cancel == "no") {
+						else if (cancel == "yes") {
 							continue; 
 						}
 						else {
-							cout<<"Type yes or no\n";
+							print("Invalid input\n");
 						}
 					}
 				}
 				else {
+					format_on();
 					cout<<"Incorrect password you have " << 3 - j << " times left: ";
-					cin >> pass;
+					format_off();
+					pass = check_int_input(0, 10000);
 				}
 				cout << endl;
 			}
@@ -237,19 +273,19 @@ void format_off(){
 }
 int check_passcode() {
 	string passcode;
-	print("Enter your passcode: ");
 	cin >> passcode;
  // Ensure passcode is a string with exactly four characters
  if (passcode.length() != 4) {
-	 print("Passcode must be exactly four characters long.\n");
-	 check_passcode(); // Add the missing argument
+	print("Passcode must be exactly four characters long.\n"
+	"Please Create a Valid Passcode: ");
+	return check_passcode();
  }
 
  // Check if each character is a digit
  for (char c : passcode) {
 	 if (!isdigit(c)) {
 		print("Passcode must be a four-digit number.\n");
-	 	check_passcode(); // Add the missing argument
+	 	return check_passcode(); // Add the missing argument
 	 }
  }
 
@@ -260,24 +296,20 @@ int check_passcode() {
 int check_int_input(int min, int max) {
 	int input;
 	cin >> input;
-    while (true) {
-        cout<<"Please enter a number between " << min << " and " << max << ": ";
-        cin >> input;
 
-        // Check if the input operation with cin was successful
-        if (cin.fail()) {
-            cin.clear();  // Clear the error flag
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Discard invalid input
-			print("Invalid input. Please enter a valid number.\n");
-			check_int_input(min, max); 
-        } else if (input < min || input > max) {
+		// Check if the input operation with cin was successful
+		if (cin.fail()) {
+			cin.clear();  // Clear the error flag
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Discard invalid input
+			print("Invalid input. Please enter a valid number: ");
+			return check_int_input(min, max); 
+		} else if (input < min || input > max) {
 			format_on();
-            cout<<"Number out of range. Please enter a number between " << min << " and " << max << ".\n";
+			cout<<"Invalid input. Please try again:";
 			format_off();
-			check_int_input(min, max);
-        } else {
-            break;  // Valid input, exit the loop
-        }
-    }
-	return input;
+			return check_int_input(min, max);
+		} else {
+			return input;
+		}
+	
 }
