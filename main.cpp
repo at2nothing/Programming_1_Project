@@ -235,17 +235,6 @@ void ATM(){  //ATM
 						}
 
 
-print("Do you want to do any other operation? (yes/no): ");
-						cin >> cancel;
-						if (cancel == "no") {
-							break;
-						}
-						else if (cancel == "yes") {
-							continue; 
-						}
-						else {
-							print("Invalid input\n");
-						}
 					}
 				}
 				else {
